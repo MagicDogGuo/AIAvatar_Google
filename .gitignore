@@ -1,0 +1,71 @@
+# Unity 專案 .gitignore
+# 參考: https://github.com/github/gitignore/blob/main/Unity.gitignore
+
+# Unity 自動生成
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Mm]emoryCaptures/
+
+# Asset meta 僅在對應 asset 被忽略時才忽略
+!/[Aa]ssets/**/*.meta
+
+# Jetbrains Rider 快取
+[Aa]ssets/Plugins/Editor/JetBrains*
+.idea/
+
+# Visual Studio 快取
+.vs/
+
+# Gradle 快取
+.gradle/
+
+# 自動生成的專案檔
+ExportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Unity 產生的 meta
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# 當機報告
+sysinfo.txt
+
+# 建置輸出
+*.apk
+*.aab
+*.unitypackage
+
+# Crashlytics
+crashlytics-build.properties
+
+# 本專案：下載的參考資源（非專案核心）
+/downlaod/
+
+# 本專案：Demo 影片（體積較大，可視需要移除此行以納入版本控制）
+/Demo/
+
+# 使用者設定（每台電腦不同）
+/[Uu]serSettings/
+
+# API 金鑰設定（勿提交到 Git）
+Assets/Resources/Config/ApiKeysConfig.asset
+Assets/Resources/Config/ApiKeysConfig.asset.meta
