@@ -500,10 +500,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7014161756123793519, guid: bb1101eed4b8da0409e07cf1255443fb, type: 3}
-      propertyPath: apiKey
-      value: AIzaSyB2hICnEbX8gfa6j3qhvMi4XxOpEaoEHIE
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -520,10 +516,6 @@ PrefabInstance:
     - target: {fileID: 2226882521313964509, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
       propertyPath: m_Name
       value: GeminiManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 6015506993103287062, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
-      propertyPath: apiKey
-      value: AIzaSyAgggsDDiLLJtooAUk4Cz5IvUzB3RXaMds
       objectReference: {fileID: 0}
     - target: {fileID: 6015506993103287062, guid: a66bfde88dbe0e846b45bc643b3e6124, type: 3}
       propertyPath: googleServices
@@ -646,10 +638,6 @@ PrefabInstance:
     - target: {fileID: 5261967304391191033, guid: 417c5af75b21ef24ca6f33c7590f00c8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5451673311877118035, guid: 417c5af75b21ef24ca6f33c7590f00c8, type: 3}
-      propertyPath: apiKey
-      value: AIzaSyB2hICnEbX8gfa6j3qhvMi4XxOpEaoEHIE
       objectReference: {fileID: 0}
     - target: {fileID: 5451673311877118035, guid: 417c5af75b21ef24ca6f33c7590f00c8, type: 3}
       propertyPath: languageCode
