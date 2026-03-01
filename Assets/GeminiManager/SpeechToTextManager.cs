@@ -42,25 +42,33 @@ namespace GoogleSpeechToText.Scripts
         var devices = Microphone.devices;
         if (devices == null || devices.Length == 0)
         {
-            Debug.LogWarning("SpeechToText: Microphone.devices 為空。若你確定有麥克風，請檢查 Windows 麥克風權限/裝置。");
+            Debug.LogWarning("SpeechToText: Microphone.devices 為空。若你確定有麥克風，請檢查麥克風權限與裝置。");
             return;
         }
 
-        Debug.Log($"SpeechToText: 可用麥克風裝置 ({devices.Length}) => [{string.Join(", ", devices)}]");
+        if (Application.isMobilePlatform)
+            Debug.Log($"SpeechToText: 手機模式，將自動使用預設麥克風。可用裝置 ({devices.Length}) => [{string.Join(", ", devices)}]");
+        else
+            Debug.Log($"SpeechToText: 可用麥克風裝置 ({devices.Length}) => [{string.Join(", ", devices)}]");
     }
 
     void Update()
     {
-         if (Keyboard.current.spaceKey.wasPressedThisFrame && !recording)
-            {
-                StartRecording();
-            }
+        // 空白鍵 或 Android 點擊螢幕 → 開始錄音
+        bool startPressed = (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+            || (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame);
+        if (startPressed && !recording)
+        {
+            StartRecording();
+        }
 
-            // Check if the spacebar is released
-            if (Keyboard.current.spaceKey.wasReleasedThisFrame && recording)
-            {
-                StopRecording();
-            }
+        // 空白鍵放開 或 手指離開螢幕 → 停止錄音
+        bool stopReleased = (Keyboard.current != null && Keyboard.current.spaceKey.wasReleasedThisFrame)
+            || (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasReleasedThisFrame);
+        if (stopReleased && recording)
+        {
+            StopRecording();
+        }
     }
 
 
@@ -71,25 +79,33 @@ namespace GoogleSpeechToText.Scripts
         var devices = Microphone.devices;
         if (devices == null || devices.Length == 0)
         {
-            Debug.LogError("SpeechToText StartRecording failed: 找不到任何麥克風裝置。請確認 Windows 麥克風權限與裝置可用。");
+            Debug.LogError("SpeechToText StartRecording failed: 找不到任何麥克風裝置。請確認麥克風權限與裝置可用。");
             return;
         }
 
-        if (microphoneDeviceIndex >= 0 && microphoneDeviceIndex < devices.Length)
-            _deviceInUse = devices[microphoneDeviceIndex];
+        // 手機平台：自動使用系統預設麥克風（null = 預設），不依賴手動設定
+        if (Application.isMobilePlatform)
+        {
+            _deviceInUse = null; // Unity 會使用裝置預設麥克風
+        }
         else
-            _deviceInUse = string.IsNullOrWhiteSpace(microphoneDevice) ? devices[0] : microphoneDevice;
-
-        var deviceExists = false;
-        foreach (var d in devices)
         {
-            if (d == _deviceInUse) { deviceExists = true; break; }
-        }
+            if (microphoneDeviceIndex >= 0 && microphoneDeviceIndex < devices.Length)
+                _deviceInUse = devices[microphoneDeviceIndex];
+            else
+                _deviceInUse = string.IsNullOrWhiteSpace(microphoneDevice) ? devices[0] : microphoneDevice;
 
-        if (!deviceExists)
-        {
-            Debug.LogError($"SpeechToText StartRecording failed: 指定的 microphoneDevice 找不到：'{_deviceInUse}'. 可用裝置：[{string.Join(", ", devices)}]");
-            return;
+            var deviceExists = false;
+            foreach (var d in devices)
+            {
+                if (d == _deviceInUse) { deviceExists = true; break; }
+            }
+
+            if (!deviceExists)
+            {
+                Debug.LogError($"SpeechToText StartRecording failed: 指定的 microphoneDevice 找不到：'{_deviceInUse}'. 可用裝置：[{string.Join(", ", devices)}]");
+                return;
+            }
         }
 
         clip = Microphone.Start(_deviceInUse, false, 10, 44100);
