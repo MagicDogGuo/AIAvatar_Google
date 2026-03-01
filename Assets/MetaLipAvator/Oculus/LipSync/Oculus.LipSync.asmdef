@@ -1,6 +1,6 @@
 {
     "name": "Oculus.LipSync",
-    "references": ["UnityEngine.AudioModule"],
+    "references": ["UnityEngine.AudioModule","MicrophoneBridge"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
