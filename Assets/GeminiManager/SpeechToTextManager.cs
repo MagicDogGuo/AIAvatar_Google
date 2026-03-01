@@ -39,6 +39,7 @@ namespace GoogleSpeechToText.Scripts
 
     private void Start()
     {
+#if !UNITY_WEBGL || UNITY_EDITOR
         var devices = Microphone.devices;
         if (devices == null || devices.Length == 0)
         {
@@ -47,25 +48,30 @@ namespace GoogleSpeechToText.Scripts
         }
 
         Debug.Log($"SpeechToText: 可用麥克風裝置 ({devices.Length}) => [{string.Join(", ", devices)}]");
+#else
+        Debug.Log("SpeechToText: WebGL 不支援 UnityEngine.Microphone，麥克風輸入已停用。");
+#endif
     }
 
     void Update()
     {
-         if (Keyboard.current.spaceKey.wasPressedThisFrame && !recording)
+#if !UNITY_WEBGL || UNITY_EDITOR
+         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame && !recording)
             {
                 StartRecording();
             }
 
-            // Check if the spacebar is released
-            if (Keyboard.current.spaceKey.wasReleasedThisFrame && recording)
+            if (Keyboard.current != null && Keyboard.current.spaceKey.wasReleasedThisFrame && recording)
             {
                 StopRecording();
             }
+#endif
     }
 
 
     private void StartRecording()
     {
+#if !UNITY_WEBGL || UNITY_EDITOR
         if (recording) return;
 
         var devices = Microphone.devices;
@@ -95,6 +101,7 @@ namespace GoogleSpeechToText.Scripts
         clip = Microphone.Start(_deviceInUse, false, 10, 44100);
         _recordingStartTime = Time.realtimeSinceStartup;
         recording = true;
+#endif
     }
 
     private byte[] EncodeAsWAV(float[] samples, int frequency, int channels) {
@@ -124,6 +131,7 @@ namespace GoogleSpeechToText.Scripts
 
     private void StopRecording()
     {
+#if !UNITY_WEBGL || UNITY_EDITOR
             if (clip == null)
             {
                 Debug.LogError("SpeechToText StopRecording failed: AudioClip is null. Did StartRecording() run successfully?");
@@ -151,10 +159,12 @@ namespace GoogleSpeechToText.Scripts
                 _stopCoroutine = null;
             }
             _stopCoroutine = StartCoroutine(StopAndSendCoroutine());
+#endif
     }
 
     private IEnumerator StopAndSendCoroutine()
     {
+#if !UNITY_WEBGL || UNITY_EDITOR
             // 確保至少錄到一點點資料（太短常常 position=0）
             while (Time.realtimeSinceStartup - _recordingStartTime < minRecordSeconds)
                 yield return null;
@@ -262,6 +272,9 @@ namespace GoogleSpeechToText.Scripts
                     var msg = error?.error?.message ?? "(unknown error)";
                     Debug.LogError("Speech-to-Text Error: " + msg);
                 });
+#else
+            yield break;
+#endif
     }
 
     }

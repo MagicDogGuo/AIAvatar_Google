@@ -25,7 +25,9 @@ using System;
 using UnityEngine;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
+#if !UNITY_WEBGL || UNITY_EDITOR
 using System.Threading;
+#endif
 
 [RequireComponent(typeof(AudioSource))]
 
@@ -110,6 +112,7 @@ public class OVRLipSyncMicInput : MonoBehaviour
     /// </summary>
     private void InitializeMicrophone()
     {
+#if !UNITY_WEBGL || UNITY_EDITOR
         if (initialized)
         {
             return;
@@ -122,6 +125,10 @@ public class OVRLipSyncMicInput : MonoBehaviour
         micSelected = true;
         GetMicCaps();
         initialized = true;
+#else
+        // WebGL 不支援 UnityEngine.Microphone，麥克風輸入需使用瀏覽器端方案（如第三方插件）
+        initialized = true;
+#endif
     }
 
 
@@ -130,6 +137,7 @@ public class OVRLipSyncMicInput : MonoBehaviour
     /// </summary>
     void Update()
     {
+#if !UNITY_WEBGL || UNITY_EDITOR
         if (!focused)
         {
             if (Microphone.IsRecording(selectedDevice))
@@ -197,7 +205,6 @@ public class OVRLipSyncMicInput : MonoBehaviour
             }
         }
 
-
         //Mic Selected = False
         if (enableMicSelectionGUI)
         {
@@ -206,6 +213,9 @@ public class OVRLipSyncMicInput : MonoBehaviour
                 micSelected = false;
             }
         }
+#else
+        audioSource.volume = (micInputVolume / 100);
+#endif
     }
 
 
@@ -267,6 +277,7 @@ public class OVRLipSyncMicInput : MonoBehaviour
         float buttonSpaceTop,
         float buttonSpaceLeft)
     {
+#if !UNITY_WEBGL || UNITY_EDITOR
         //If there is more than one device, choose one.
         if (Microphone.devices.Length >= 1 && enableMicSelectionGUI == true && micSelected == false)
         {
@@ -284,6 +295,7 @@ public class OVRLipSyncMicInput : MonoBehaviour
                 }
             }
         }
+#endif
     }
 
     /// <summary>
@@ -291,6 +303,7 @@ public class OVRLipSyncMicInput : MonoBehaviour
     /// </summary>
     public void GetMicCaps()
     {
+#if !UNITY_WEBGL || UNITY_EDITOR
         if (micSelected == false) return;
 
         //Gets the frequency of the device
@@ -305,6 +318,7 @@ public class OVRLipSyncMicInput : MonoBehaviour
 
         if (micFrequency > maxFreq)
             micFrequency = maxFreq;
+#endif
     }
 
     /// <summary>
@@ -312,6 +326,7 @@ public class OVRLipSyncMicInput : MonoBehaviour
     /// </summary>
     public void StartMicrophone()
     {
+#if !UNITY_WEBGL || UNITY_EDITOR
         if (micSelected == false) return;
 
         //Starts recording
@@ -330,6 +345,7 @@ public class OVRLipSyncMicInput : MonoBehaviour
         }
         // Play the audio source
         audioSource.Play();
+#endif
     }
 
     /// <summary>
@@ -337,6 +353,7 @@ public class OVRLipSyncMicInput : MonoBehaviour
     /// </summary>
     public void StopMicrophone()
     {
+#if !UNITY_WEBGL || UNITY_EDITOR
         if (micSelected == false) return;
 
         // Overriden with a clip to play? Don't stop the audio source
@@ -347,11 +364,12 @@ public class OVRLipSyncMicInput : MonoBehaviour
             audioSource.Stop();
         }
 
-        // Reset to stop mouth movement
-        OVRLipSyncContext context = GetComponent<OVRLipSyncContext>();
-        context.ResetContext();
-
         Microphone.End(selectedDevice);
+#endif
+        // Reset to stop mouth movement（WebGL 與一般平台皆需重置）
+        OVRLipSyncContext context = GetComponent<OVRLipSyncContext>();
+        if (context != null)
+            context.ResetContext();
     }
 
 
