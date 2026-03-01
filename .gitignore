@@ -9,6 +9,7 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Mm]emoryCaptures/
+.utmp/
 
 # Asset meta 僅在對應 asset 被忽略時才忽略
 !/[Aa]ssets/**/*.meta
